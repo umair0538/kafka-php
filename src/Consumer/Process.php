@@ -480,6 +480,12 @@ class Process
             }
         }
 
+        // to always start at the end if latest
+        $resetOffset = \Kafka\ConsumerConfig::getInstance()->getOffsetReset();
+        if ($resetOffset == 'latest' && empty(\Kafka\Consumer\Assignment::getInstance()->getConsumerOffsets())) {
+            \Kafka\Consumer\Assignment::getInstance()->setConsumerOffsets($lastOffsets);
+        }
+
         $this->getAssignment()->setOffsets($offsets);
         $this->getAssignment()->setLastOffsets($lastOffsets);
         $this->state->succRun(State::REQUEST_OFFSET, $fd);
